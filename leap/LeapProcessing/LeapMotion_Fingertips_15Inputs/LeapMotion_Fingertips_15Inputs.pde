@@ -22,7 +22,7 @@ void setup() {
 
   /* start oscP5, listening for incoming messages at port 12000 */
   oscP5 = new OscP5(this,9000);
-  dest = new NetAddress("127.0.0.1",6448);
+  dest = new NetAddress("127.0.0.1",56110);
 
   leap = new LeapMotion(this);
   sendInputNames();
@@ -277,7 +277,7 @@ void leapOnExit() {
 
 //====== OSC SEND ======
 void sendOsc() {
-  OscMessage msg = new OscMessage("/wek/inputs");
+  OscMessage msg = new OscMessage("/test");
   if (numFound > 0) {
     for (int i = 0; i < features.length; i++) {
       msg.add(features[i]);
@@ -304,4 +304,3 @@ void sendInputNames() {
   oscP5.send(msg, dest); 
   println("Sent finger names" + n);
 }
-

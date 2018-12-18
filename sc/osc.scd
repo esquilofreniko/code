@@ -1,10 +1,16 @@
-o = NetAddr("127.0.0.1", 57110);
+// o = NetAddr("127.0.0.1", 57110);
 
-o.sendMsg("/test", 1,2,3,4,5);
+n.sendMsg("/testout", 1,2,3,4,5);
 
-n = NetAddr.new("127.0.0.1", 56110);    // create the NetAddr
-// create the OSCFunc
-f = OSCFunc({ arg msg, time, addr, recvPort; [msg, time, addr, recvPort].postln; }, '/goodbye', n);
-f.free;    // remove the OSCFunc when you are done.b
+o.free
 
-f = OSCFunc({ arg msg, time, addr, recvPort; [msg, time, addr, recvPort].postln; }, '/goodbye'); // create the OSCFunc
+(
+//Listen
+// OSCFunc.trace(false);
+n = NetAddr.new("127.0.0.1", 7400);
+f = OSCFunc({ arg msg, time, addr, recvPort; [msg, time, addr, recvPort].postln;}, \test, n);
+)
+
+f.free;
+
+1.postln
