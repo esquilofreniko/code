@@ -16,14 +16,12 @@ int numFound = 0;
 float[] features = new float[15];
 
 void setup() {
-  size(800, 500, OPENGL);
+  size(800, 600, OPENGL);
   background(255);
   // ...
 
-  /* start oscP5, listening for incoming messages at port 12000 */
-  oscP5 = new OscP5(this,9000);
-  dest = new NetAddress("127.0.0.1",56110);
-
+  oscP5 =   new OscP5(this,9000);
+  dest = new NetAddress("127.0.0.1",57120);
   leap = new LeapMotion(this);
   sendInputNames();
   
@@ -174,7 +172,6 @@ numFound = 0;
       Bone    bone_metacarpal   = finger.getMetacarpalBone();
       // or                       finger.get("metacarpal");
       // or                       finger.getBone(3);
-
 
       // ----- DRAWING -----
 
