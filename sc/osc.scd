@@ -1,16 +1,8 @@
-// o = NetAddr("127.0.0.1", 57110);
+b = NetAddr.new("127.0.0.1", 7400);    // create the NetAddr
+b.sendMsg("/hello", "there");    // send the application the message "hello" with the parameter "there"
 
-n.sendMsg("/testout", 1,2,3,4,5);
-
-o.free
-
-(
-//Listen
-// OSCFunc.trace(false);
-n = NetAddr.new("127.0.0.1", 7400);
-f = OSCFunc({ arg msg, time, addr, recvPort; [msg, time, addr, recvPort].postln;}, \test, n);
-)
-
-f.free;
-
-1.postln
+//RECEIVE OSC ON PORT 57120
+NetAddr.localAddr
+// create the OSCFunc
+o = OSCFunc({ arg msg, time, addr, recvPort; [msg, time, addr, recvPort].postln; }, '/goodbye', n);
+o.free;    // remove the OSCFunc when you are done.
