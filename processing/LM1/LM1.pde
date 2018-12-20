@@ -186,18 +186,18 @@ void setup() {
   background(255);
   leap = new LeapMotion(this);
   oscP5 =new OscP5(this,9000);
-  dest = new NetAddress("127.0.0.1",6448);
+  dest = new NetAddress("127.0.0.1",4000);
 }
 
 void draw(){
   background(255);
   leapMotion();
   if(lefthand == true){
-     sendOsc(fingertips[0],"/wek/fingerTipsL");
+     sendOsc(fingertips[0],"/fingerTipsL");
      sendOsc(grabstrength[0],"/grabstrengthL");
   }
   if(righthand == true){
-     sendOsc(fingertips[1],"/wek/fingerTipsR");
+     sendOsc(fingertips[1],"/keras1in");
      sendOsc(grabstrength[1],"/grabstrengthR");
   }
 }

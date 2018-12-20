@@ -27,17 +27,17 @@ nn.train(x,y,nExamples,epochs)
 
 #Predict    
 oscservermsg = 0
-oscserver = OscServer("127.0.0.1",4000,"/kerasin")
-oscclient = OscClient("127.0.0.1",57120,"/kerasout")
+oscserver = OscServer("127.0.0.1",4000,'/keras1in')
+oscclient = OscClient("127.0.0.1",57120,'/keras1out')
 while True:
     if(oscservermsg != oscserver.msg):
         xin = np.array([oscserver.msg])
         yout = nn.predict(xin)
+        yout = yout.tolist()
         oscclient.sendMsg(yout)
         oscservermsg = oscserver.msg
         print("OSC server listening on {}".format(oscserver.server.server_address),"handler:",oscserver.handler)
         print("press q to quit...")
-    time.sleep(0.05)
     try: 
         if keyboard.is_pressed('q'): 
             oscserver.server.shutdown()
@@ -48,5 +48,4 @@ while True:
     except:
         oscserver.server.shutdown()
         quit()
-        pass 
-
+        break

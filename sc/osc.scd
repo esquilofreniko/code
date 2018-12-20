@@ -2,7 +2,7 @@
 
 (
 b = NetAddr.new("127.0.0.1", 4000);
-b.sendMsg("/kerasin",rand(1000)/1000,rand(1000)/1000,rand(1000)/1000);
+b.sendMsg("/keras1in",rand(100)/100,rand(100)/100,rand(100)/100);
 )
 b.free;
 

@@ -17,17 +17,10 @@ class OscClient:
         self.client = udp_client.SimpleUDPClient(args.ip, args.port)
         self.address = address
 
-    def build_osc_message(self,positioning_values):
-        builder = OscMessageBuilder(address=self.address)
-        for v in positioning_values:
-            builder.add_arg(v)
-        return builder.build()
-
     def sendMsg(self,msg):
         builder = OscMessageBuilder(address=self.address)
-        for i in range(msg.size):
-            for v in range(msg[0].size):
-                builder.add_arg(v)
+        for v in msg:
+            builder.add_arg(v)
         out = builder.build()
         self.client.send(out)
 
