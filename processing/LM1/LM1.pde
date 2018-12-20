@@ -182,23 +182,22 @@ void sendOsc(float[]output,String name) {
 }
 
 void setup() {
-  //fullScreen(OPENGL);
   size(800,600,OPENGL);
   background(255);
   leap = new LeapMotion(this);
   oscP5 =new OscP5(this,9000);
-  dest = new NetAddress("127.0.0.1",57120);
+  dest = new NetAddress("127.0.0.1",6448);
 }
 
 void draw(){
   background(255);
   leapMotion();
   if(lefthand == true){
-     sendOsc(fingertips[0],"fingertipsL");
-     sendOsc(grabstrength[0],"grabstrengthL");
+     sendOsc(fingertips[0],"/wek/fingerTipsL");
+     sendOsc(grabstrength[0],"/grabstrengthL");
   }
   if(righthand == true){
-     sendOsc(fingertips[1],"fingertipsR");
-     sendOsc(grabstrength[1],"grabstrengthR");
+     sendOsc(fingertips[1],"/wek/fingerTipsR");
+     sendOsc(grabstrength[1],"/grabstrengthR");
   }
 }

@@ -2,6 +2,11 @@ import keras1
 from keras1 import NeuralNetRegression
 import numpy as np
 import time
+import argparse
+import math
+from pythonosc.osc_message_builder import OscMessageBuilder
+from pythonosc.udp_client import UDPClient
+
 
 #parameters
 inputdimension  = 30
@@ -28,4 +33,5 @@ try:
         time.sleep(0.1)
 except KeyboardInterrupt:
     pass
+
 
