@@ -9,21 +9,26 @@ from pythonosc import osc_message_builder
 from pythonosc.osc_message_builder import OscMessageBuilder
 
 class OscClient:
-    def __init__(self,ip,port):
+    def __init__(self,ip,port,address):
         parser = argparse.ArgumentParser()
         parser.add_argument("--ip", default=ip)
         parser.add_argument("--port", type=int, default=port)
         args = parser.parse_args()
         self.client = udp_client.SimpleUDPClient(args.ip, args.port)
+        self.address = address
 
     def build_osc_message(self,positioning_values):
-        builder = OscMessageBuilder(address='/wek/inputs')
+        builder = OscMessageBuilder(address=self.address)
         for v in positioning_values:
             builder.add_arg(v)
         return builder.build()
 
     def sendMsg(self,msg):
-        out = self.build_osc_message(msg)
+        builder = OscMessageBuilder(address=self.address)
+        for i in range(msg.size):
+            for v in range(msg[0].size):
+                builder.add_arg(v)
+        out = builder.build()
         self.client.send(out)
 
 

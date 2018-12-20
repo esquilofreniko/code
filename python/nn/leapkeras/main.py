@@ -12,8 +12,8 @@ from pythonosc.udp_client import UDPClient
 
 
 #parameters
-inputdimension  = 1
-outputdimension = 1
+inputdimension  = 3
+outputdimension = 3
 nExamples = 20
 nHidden = 10
 nNodes = 100
@@ -27,16 +27,14 @@ nn.train(x,y,nExamples,epochs)
 
 #Predict    
 oscservermsg = 0
-oscserver = OscServer("127.0.0.1",4000,"/test")
-oscclient = OscClient("127.0.0.1",57120)
+oscserver = OscServer("127.0.0.1",4000,"/kerasin")
+oscclient = OscClient("127.0.0.1",57120,"/kerasout")
 while True:
-    # predictionsize = 1
-    # xin_ = np.random.rand(inputdimension,predictionsize)
     if(oscservermsg != oscserver.msg):
         xin = np.array([oscserver.msg])
         yout = nn.predict(xin)
+        oscclient.sendMsg(yout)
         oscservermsg = oscserver.msg
-    # oscclient.sendMsg(np.random.rand(15))
         print("OSC server listening on {}".format(oscserver.server.server_address),"handler:",oscserver.handler)
         print("press q to quit...")
     time.sleep(0.05)

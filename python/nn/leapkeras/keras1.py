@@ -34,7 +34,7 @@ class NeuralNetRegression:
         self.yout = self.model.predict(self.xin)
         # Print Inputs -> Output Prediction
         for i in range(self.xin.shape[0]):
-            print("X=%s, Predicted=%s" % (self.xin[i], self.yout[i]))
+            print("Inputs=%s, Predicted=%s" % (self.xin[i], self.yout[i]))
         return self.yout
 
     def plot(self,x,y,xin,yout):
