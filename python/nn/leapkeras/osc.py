@@ -1,9 +1,6 @@
 import argparse
 import math
 import threading
-import random
-import time
-import keyboard
 import numpy as np
 from pythonosc import dispatcher
 from pythonosc import udp_client
@@ -33,31 +30,14 @@ class OscClient:
 class OscServer:
     def print_msg(self,unused_addr, *args):
         self.msg = args
-        print("/test",self.msg)
+        print(self.handler,self.msg)
         
     def __init__(self,ip,port,handler):
+        self.msg = np.array([0])
+        self.handler = handler
         self.dispatcher = dispatcher.Dispatcher()
         self.dispatcher.map(handler, self.print_msg)
         self.server = osc_server.ThreadingOSCUDPServer((ip, port), self.dispatcher)
         print("OSC server listening on {}".format(self.server.server_address),"handler:",handler)
         server_thread = threading.Thread(target=self.server.serve_forever)
         server_thread.start()
-
-# Main Loop
-oscserver = OscServer("127.0.0.1",4000,"/test")
-oscclient = OscClient("127.0.0.1",57120)
-print("press q to quit...")
-while True:
-    oscclient.sendMsg(np.random.rand(15))
-    time.sleep(0.05)
-    try: 
-        if keyboard.is_pressed('q'): 
-            oscserver.server.shutdown()
-            quit()
-            break 
-        else:
-            pass
-    except:
-        oscserver.server.shutdown()
-        quit()
-        break 

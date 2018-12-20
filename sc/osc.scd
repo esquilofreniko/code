@@ -1,6 +1,8 @@
+
+
 (
 b = NetAddr.new("127.0.0.1", 4000);
-b.sendMsg("/test",4.0,5,6,7,7,6,5,4,3,4,4,124,41,241);
+b.sendMsg("/test",rand(100)/100);
 )
 b.free;
 
