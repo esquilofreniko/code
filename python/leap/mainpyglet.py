@@ -63,71 +63,79 @@ class SampleListener(Leap.Listener):
                     for i in range(4):
                         self.bone[f.type][i] = normalize(np.array([f.bone(i).center.x,f.bone(i).center.y,f.bone(i).center.z]),self.scalepos)
 
-from tkinter import *
+import math
+import pyglet
+import numpy as np
+from pyglet.gl import *
 
-tk = Tk()
+import ctypes
+user32 = ctypes.windll.user32
+screensize = [user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)]
+print(screensize)
+
 width = 600
 height = 400
-depth = 4
-ws = tk.winfo_screenwidth() # width of the screen
-hs = tk.winfo_screenheight() # height of the screen
-tk.geometry('%dx%d+%d+%d' % (width, height, ws-width, -30))
-canvas = Canvas(tk, width=width, height=height, bd=0, highlightthickness=0)
-canvas.pack()
+depth = 0
+leap = SampleListener()
+win = pyglet.window.Window(width,height)
+win.set_location(screensize[0] - width, 0)
+pyglet.graphics.glEnable(pyglet.graphics.GL_DEPTH_TEST)
+pyglet.graphics.glEnable(pyglet.graphics.GL_BLEND)
 
-def limit(tolimit):
-    if tolimit < 0: tolimit = 0
-    if tolimit > 1: tolimit = 1
-    return tolimit
+label = pyglet.text.Label("Hello World!",
+                            font_name="Times New Roman",
+                            color=(255,255,255,255),
+                            font_size=36,
+                            x=win.width//2, y=win.height//2,
+                            anchor_x="center", anchor_y="center")
 
-def drawPoint(x,y,z,color):
-    x = limit((x*2)-0.5)
-    y = limit(((1-y)*2)-0.5)
-    z = limit((z*2)-0.5)
-    canvas.create_oval(x*width,y*height,x*width,y*height,width=4,fill=color,outline=color)
-
-def drawLine(x,y,x2,y2,z,color):
-    x = limit((x*2)-0.5)
-    y = limit(((1-y)*2)-0.5)
-    x2 = limit((x2*2)-0.5)
-    y2 = limit(((1-y2)*2)-0.5)
-    z = limit((z*2)-0.5)
-    canvas.create_line(x*width,y*height,x2*width,y2*height, width=1,fill=color)
+def update(dt):
+    if leap.position.all > 0:
+        glClearColor(1,1,1,1)
+        win.clear()
+        glPointSize(5)
+        gl.glColor4f(0,0,0,0)
+        for i in range(5):
+            if leap.ftposition[i].all > 0:
+                glPointSize(5)
+                glBegin(GL_POINTS) 
+                glVertex3f((leap.arm[0][0]*2.0-0.5)*width,(leap.arm[0][1]*2.0-0.5)*height,((leap.arm[0][2])*2.0-0.5)*depth)
+                glVertex3f((leap.arm[1][0]*2.0-0.5)*width,(leap.arm[1][1]*2.0-0.5)*height,((leap.arm[1][2])*2.0-0.5)*depth)
+                # glVertex3f((leap.position[0]*2.0-0.5)*width,(leap.position[1]*2.0-0.5)*height,((leap.position[2])*2.0-0.5)*depth)
+                for j in range(4):
+                    glVertex3f((leap.bone[i][j][0]*2-0.5)*width,(leap.bone[i][j][1]*2-0.5)*height,((leap.bone[i][j][2])*2-0.5)*depth)
+                glEnd()
+                glLineWidth(2)
+                glBegin(GL_LINE_STRIP)
+                glVertex3f((leap.arm[0][0]*2.0-0.5)*width,(leap.arm[0][1]*2.0-0.5)*height,((leap.arm[0][2])*2.0-0.5)*depth)
+                glVertex3f((leap.arm[1][0]*2.0-0.5)*width,(leap.arm[1][1]*2.0-0.5)*height,((leap.arm[1][2])*2.0-0.5)*depth)
+                glEnd()
+                glBegin(GL_LINE_STRIP)
+                for j in range(4):
+                    glVertex3f((leap.bone[i][j][0]*2-0.5)*width,(leap.bone[i][j][1]*2-0.5)*height,((leap.bone[i][j][2])*2-0.5)*depth)
+                glEnd()
+                glBegin(GL_LINE_STRIP)
+                glVertex3f((leap.arm[1][0]*2.0-0.5)*width,(leap.arm[1][1]*2.0-0.5)*height,((leap.arm[1][2])*2.0-0.5)*depth)
+                for j in range(4):
+                    glVertex3f((leap.bone[i][j][0]*2-0.5)*width,(leap.bone[i][j][1]*2-0.5)*height,((leap.bone[i][j][2])*2-0.5)*depth)
+                glEnd()
+        glBegin(GL_LINE_STRIP)                
+        for i in range(5):
+            glVertex3f((leap.bone[i][0][0]*2-0.5)*width,(leap.bone[i][0][1]*2-0.5)*height,((leap.bone[i][0][2])*2-0.5)*depth)
+        glEnd() 
+    if keyboard.is_pressed('ESC'):
+        controller.remove_listener(leap)
+        quit()
 
 def main():
-    leap = SampleListener()
     leap.init()
     controller = Leap.Controller()
     controller.add_listener(leap)
     print("Press ESC to Quit...")
-    while True:
-        time.sleep(0.1)
-        canvas.create_rectangle(0,0,width,height, fill='white')
-        drawPoint(leap.arm[0][0],leap.arm[0][1],leap.arm[0][2],'blue')
-        drawPoint(leap.arm[1][0],leap.arm[1][1],leap.arm[1][2],'blue')
-        for i in range(5):
-            drawPoint(leap.ftposition[i][0],leap.ftposition[i][1],leap.ftposition[i][2],'black')
-            for j in range(4):
-                drawPoint(leap.bone[i][j][0],leap.bone[i][j][1],leap.bone[i][j][2],'black')
-        drawLine(leap.arm[0][0],leap.arm[0][1],leap.arm[1][0],leap.arm[1][1],leap.arm[0][2],'blue')
-        for i in range(5):
-            for j in range(3):
-                drawLine(leap.bone[i][j][0],leap.bone[i][j][1],leap.bone[i][j+1][0],leap.bone[i][j+1][1],leap.bone[i][j][2],'black')
-            drawLine(leap.bone[i][3][0],leap.bone[i][3][1],leap.ftposition[i][0],leap.ftposition[i][1],leap.ftposition[i][2],'black')
-        for i in range(4):
-            drawLine(leap.bone[i][0][0],leap.bone[i][0][1],leap.bone[i+1][0][0],leap.bone[i+1][0][1],leap.bone[i][0][2],'purple')
-        drawLine(leap.bone[4][0][0],leap.bone[4][0][1],leap.bone[0][0][0],leap.bone[0][0][1],leap.bone[4][0][2],'purple')
-        for i in range(5):
-            drawLine(leap.bone[i][0][0],leap.bone[i][0][1],leap.arm[1][0],leap.arm[1][1],leap.bone[4][0][2],'purple')
-            drawLine(leap.bone[i][0][0],leap.bone[i][0][1],leap.arm[1][0],leap.arm[1][1],leap.bone[0][0][2],'purple')
-        canvas.create_text(5,5,fill='black', anchor = "w", text = "Press ESC to Quit")
-        tk.update()
-        if keyboard.is_pressed('ESC'):
-            controller.remove_listener(leap)
-            canvas.quit()
-            tk.quit()
-            time.sleep(0.1)
-            quit()
+    glEnable(GL_TEXTURE_2D)
+    glEnable(GL_BLEND)
+    pyglet.clock.schedule_interval(update, 0.1)
+    pyglet.app.run()
 
 if __name__ == "__main__":
     main()

@@ -1,6 +1,7 @@
 import de.voidplus.leapmotion.*;
 import oscP5.*;
 import netP5.*;
+
 OscP5 oscP5;
 NetAddress dest;
 LeapMotion leap;
@@ -20,6 +21,7 @@ int sendport = 4000;
 // 1. Callbacks
 void leapOnInit() {println("Leap Motion Init");}
 void leapOnConnect() {println("Leap Motion Connect");}
+void leapOnFrame() {redraw();}
 void leapOnDisconnect() {println("Leap Motion Disconnect");}
 void leapOnExit() {println("Leap Motion Exit");}
 
@@ -131,6 +133,7 @@ void sendOsc(float[]output,String name) {
 //===== OSC RECEIVE =====
 void oscEvent(OscMessage theOscMessage) {
   if(theOscMessage.checkAddrPattern("/focuswindow")==true) {
+    redraw();
     println(theOscMessage);
     focuswindow = theOscMessage.get(0).intValue();
     print("focuswindow: ");
@@ -138,20 +141,28 @@ void oscEvent(OscMessage theOscMessage) {
   }
 }
 
+  
+import processing.serial.*;
+
+Serial myPort;  // The serial port
+
+
 void setup() {
   surface.setAlwaysOnTop(true);
   size(600,400);
   background(255);
   leap = new LeapMotion(this);
+  leap.allowBackgroundApps();
   oscP5 =new OscP5(this,recvport);
   dest = new NetAddress("127.0.0.1",sendport);
 }
 
 int focuswindow=0;
 
-
 void draw(){
-  if(focuswindow==1){surface.setVisible(true);}
+  //if(focuswindow==1){surface.setVisible(true);}
+  frame.toFront();
+  frame.repaint();
   background(255);
   leapMotion();
   if(righthand == true){
