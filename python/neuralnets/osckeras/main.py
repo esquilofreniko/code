@@ -11,7 +11,7 @@ from pythonosc.osc_message_builder import OscMessageBuilder
 from pythonosc.udp_client import UDPClient
 
 #parameters
-inputdimension  = 15
+inputdimension  = 3
 outputdimension = 256
 nExamples = 20
 nHidden = 10

@@ -11,8 +11,9 @@ float[] grabstrength = new float[2];
 float[] stretchedfingers = new float[5];
 float[] direction = new float[3];
 float[] dynamics = new float[3];
+
 //OSC ADDRESSES
-int recvport = 9000;
+int recvport = 3000;
 int sendport = 4000;
 
 // ======================================================
@@ -127,19 +128,36 @@ void sendOsc(float[]output,String name) {
   oscP5.send(msg, dest);
 }
 
+//===== OSC RECEIVE =====
+void oscEvent(OscMessage theOscMessage) {
+  if(theOscMessage.checkAddrPattern("/focuswindow")==true) {
+    println(theOscMessage);
+    focuswindow = theOscMessage.get(0).intValue();
+    print("focuswindow: ");
+    println(focuswindow);
+  }
+}
+
 void setup() {
-  size(600,400,OPENGL);
+  surface.setAlwaysOnTop(true);
+  size(600,400);
   background(255);
   leap = new LeapMotion(this);
   oscP5 =new OscP5(this,recvport);
   dest = new NetAddress("127.0.0.1",sendport);
 }
 
+int focuswindow=0;
+
+
 void draw(){
+  if(focuswindow==1){surface.setVisible(true);}
   background(255);
   leapMotion();
   if(righthand == true){
      sendOsc(position,"/leap/position");
+     println(dynamics);  
+     println(direction);
      sendOsc(dynamics,"/leap/dynamics");
      sendOsc(direction,"/leap/direction");
      sendOsc(grabstrength,"/leap/grabstrength");
