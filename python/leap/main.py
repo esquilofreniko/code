@@ -64,17 +64,21 @@ class SampleListener(Leap.Listener):
                         self.bone[f.type][i] = normalize(np.array([f.bone(i).center.x,f.bone(i).center.y,f.bone(i).center.z]),self.scalepos)
 
 import OSC
-oscport = 4000
-oscclient = OSC.OSCClient()
-oscclient.connect(('127.0.0.1', oscport))
-print("sending OSC messages to port:",oscport)
+osckerasport = 4000
+oscmaxport = 4001
+oscclientkeras = OSC.OSCClient()
+oscclientmax = OSC.OSCClient()
+oscclientkeras.connect(('127.0.0.1', osckerasport))
+oscclientmax.connect(('127.0.0.1',oscmaxport))
 
-def sendOscMsg(arguments,address):
+print("sending OSC messages to ports:",osckerasport, oscmaxport)
+
+def sendOscMsg(client,arguments,address):
     oscmsg = OSC.OSCMessage()
     oscmsg.setAddress(address)
     for i in arguments:
         oscmsg.append(i)
-    oscclient.send(oscmsg)
+    client.send(oscmsg)
 
 from tkinter import *
 tk = Tk()
@@ -83,7 +87,7 @@ height = 400
 depth = 4
 ws = tk.winfo_screenwidth() # width of the screen
 hs = tk.winfo_screenheight() # height of the screen
-tk.geometry('%dx%d+%d+%d' % (width, height, ws-width, -30))
+tk.geometry('%dx%d+%d+%d' % (width, height, ws-width-5, -30))
 canvas = Canvas(tk, width=width, height=height, bd=0, highlightthickness=0)
 canvas.pack()
 
@@ -111,9 +115,10 @@ def main():
     leap.init()
     controller = Leap.Controller()
     controller.add_listener(leap)
-    print("Press ESC to Quit...")
+    print("Press END to Quit...")
     while True:
         time.sleep(0.1)
+        canvas.delete("all")
         canvas.create_rectangle(0,0,width,height, fill='black')
         drawPoint(leap.arm[0][0],leap.arm[0][1],leap.arm[0][2],'blue')
         drawPoint(leap.arm[1][0],leap.arm[1][1],leap.arm[1][2],'blue')
@@ -132,21 +137,22 @@ def main():
         for i in range(5):
             drawLine(leap.bone[i][0][0],leap.bone[i][0][1],leap.arm[1][0],leap.arm[1][1],leap.bone[4][0][2],'purple')
             drawLine(leap.bone[i][0][0],leap.bone[i][0][1],leap.arm[1][0],leap.arm[1][1],leap.bone[0][0][2],'purple')
-        canvas.create_text(5,5,fill='white', anchor = "w", text = "Press ESC to Quit")
-        canvas.create_text(width-10,5,fill='white',anchor='e',text=["OSC out port:",oscport])
-        sendOscMsg([leap.position],'/leap/position')
-        sendOscMsg([leap.grabstr],'/leap/grabstr')
-        sendOscMsg([leap.direction],'/leap/direction')
-        sendOscMsg([leap.velocity],'/leap/velocity')
-        sendOscMsg([leap.stretchedfingers], '/leap/stretchedfingers')
-        sendOscMsg([leap.arm],'/leap/arm')
-        sendOscMsg([leap.ftposition],'/leap/ftposition')
-        sendOscMsg([leap.ftdirection],'/leap/ftdirection')
-        sendOscMsg([leap.ftvelocity],'/leap/ftvelocity')
-        sendOscMsg([leap.bone],'/leap/bone')
+        canvas.create_text(5,5,fill='white', anchor = "w", text = "Press END to Quit")
+        sendOscMsg(oscclientkeras,[leap.position],'/leap/position')
+        sendOscMsg(oscclientmax,[leap.grabstr],'/leap/grabstr')
+        sendOscMsg(oscclientmax,[leap.pinchstr],'/leap/pinchstr')
+        sendOscMsg(oscclientmax,[leap.direction],'/leap/direction')
+        sendOscMsg(oscclientmax,[leap.velocity],'/leap/velocity')
+        sendOscMsg(oscclientmax,[leap.stretchedfingers], '/leap/stretchedfingers')
+        # sendOscMsg([leap.arm],'/leap/arm')
+        # sendOscMsg(oscclientmax,[leap.ftposition],'/leap/ftposition')
+        # sendOscMsg([leap.ftdirection],'/leap/ftdirection')
+        # sendOscMsg([leap.ftvelocity],'/leap/ftvelocity')
+        # sendOscMsg([leap.bone],'/leap/bone')
         tk.update()
-        if keyboard.is_pressed('ESC'):
+        if keyboard.is_pressed('END'):
             controller.remove_listener(leap)
+            canvas.delete("all")
             canvas.quit()
             tk.quit()
             time.sleep(0.1)

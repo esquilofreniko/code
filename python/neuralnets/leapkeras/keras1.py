@@ -36,7 +36,7 @@ class NeuralNetRegression:
         # for i in range(self.xin.shape[0]):
         #     print("Inputs=",self.xin[i])
         #     print("Predicted=",self.yout[i])
-        print("Predicted",self.outputdimension,"Outputs from",self.inputdimension,"Inputs")
+        # print("Predicted",self.outputdimension,"Outputs from",self.inputdimension,"Inputs")
         return self.yout
 
     def plot(self,x,y,xin,yout):

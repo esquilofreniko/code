@@ -24,13 +24,13 @@ class OscClient:
         for v in msg[0]:
             builder.add_arg(v)
         out = builder.build()
-        print("sent osc message to",self.ip,"on port",self.port,"with address",self.address)
+        # print("sent osc message to",self.ip,"on port",self.port,"with address",self.address)
         self.client.send(out)
 
 class OscServer:
     def getX(self,unused_addr, *args):
         self.xin = args
-        print(self.xhandler,"received with size:",np.array(self.xin).size)
+        # print(self.xhandler,"received with size:",np.array(self.xin).size)
 
     def getY(self,unused_addr, *args):
         self.yin = args
@@ -45,6 +45,6 @@ class OscServer:
         self.dispatcher.map(xhandler, self.getX)
         self.dispatcher.map(yhandler,self.getY)
         self.server = osc_server.ThreadingOSCUDPServer((ip, port), self.dispatcher)
-        print("OSC server listening on {}".format(self.server.server_address),"with handlers:",self.xhandler,self.yhandler)
+        # print("OSC server listening on {}".format(self.server.server_address),"with handlers:",self.xhandler,self.yhandler)
         server_thread = threading.Thread(target=self.server.serve_forever)
         server_thread.start()
