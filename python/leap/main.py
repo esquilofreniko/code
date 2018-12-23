@@ -33,7 +33,7 @@ class SampleListener(Leap.Listener):
         self.arm = np.zeros([2,3])
     
     def on_connect(self, controller):
-        print("Connected")
+        print("Leap Connected")
 
     def on_frame(self, controller):
         self.frame = controller.frame()
@@ -45,8 +45,8 @@ class SampleListener(Leap.Listener):
                 # get scaled hand positiom
                 self.position = normalize(np.array([h.palm_position.x,h.palm_position.y,h.palm_position.z]),self.scalepos)
                 # get hand direction and velocity
-                self.direction = h.palm_normal
-                self.velocity = h.palm_velocity
+                self.direction = normalize(np.array([h.palm_normal.x,h.palm_normal.y,h.palm_normal.z]),self.scalepos)
+                self.velocity = normalize(np.array([h.palm_velocity.x,h.palm_velocity.y,h.palm_velocity.z]),self.scalepos)
                 # get hand grab strength
                 self.grabstr = h.grab_strength
                 self.pinchstr = h.pinch_strength
@@ -63,8 +63,20 @@ class SampleListener(Leap.Listener):
                     for i in range(4):
                         self.bone[f.type][i] = normalize(np.array([f.bone(i).center.x,f.bone(i).center.y,f.bone(i).center.z]),self.scalepos)
 
-from tkinter import *
+import OSC
+oscport = 4000
+oscclient = OSC.OSCClient()
+oscclient.connect(('127.0.0.1', oscport))
+print("sending OSC messages to port:",oscport)
 
+def sendOscMsg(arguments,address):
+    oscmsg = OSC.OSCMessage()
+    oscmsg.setAddress(address)
+    for i in arguments:
+        oscmsg.append(i)
+    oscclient.send(oscmsg)
+
+from tkinter import *
 tk = Tk()
 width = 600
 height = 400
@@ -102,25 +114,36 @@ def main():
     print("Press ESC to Quit...")
     while True:
         time.sleep(0.1)
-        canvas.create_rectangle(0,0,width,height, fill='white')
+        canvas.create_rectangle(0,0,width,height, fill='black')
         drawPoint(leap.arm[0][0],leap.arm[0][1],leap.arm[0][2],'blue')
         drawPoint(leap.arm[1][0],leap.arm[1][1],leap.arm[1][2],'blue')
         for i in range(5):
-            drawPoint(leap.ftposition[i][0],leap.ftposition[i][1],leap.ftposition[i][2],'black')
+            drawPoint(leap.ftposition[i][0],leap.ftposition[i][1],leap.ftposition[i][2],'white')
             for j in range(4):
-                drawPoint(leap.bone[i][j][0],leap.bone[i][j][1],leap.bone[i][j][2],'black')
+                drawPoint(leap.bone[i][j][0],leap.bone[i][j][1],leap.bone[i][j][2],'white')
         drawLine(leap.arm[0][0],leap.arm[0][1],leap.arm[1][0],leap.arm[1][1],leap.arm[0][2],'blue')
         for i in range(5):
             for j in range(3):
-                drawLine(leap.bone[i][j][0],leap.bone[i][j][1],leap.bone[i][j+1][0],leap.bone[i][j+1][1],leap.bone[i][j][2],'black')
-            drawLine(leap.bone[i][3][0],leap.bone[i][3][1],leap.ftposition[i][0],leap.ftposition[i][1],leap.ftposition[i][2],'black')
+                drawLine(leap.bone[i][j][0],leap.bone[i][j][1],leap.bone[i][j+1][0],leap.bone[i][j+1][1],leap.bone[i][j][2],'white')
+            drawLine(leap.bone[i][3][0],leap.bone[i][3][1],leap.ftposition[i][0],leap.ftposition[i][1],leap.ftposition[i][2],'white')
         for i in range(4):
             drawLine(leap.bone[i][0][0],leap.bone[i][0][1],leap.bone[i+1][0][0],leap.bone[i+1][0][1],leap.bone[i][0][2],'purple')
         drawLine(leap.bone[4][0][0],leap.bone[4][0][1],leap.bone[0][0][0],leap.bone[0][0][1],leap.bone[4][0][2],'purple')
         for i in range(5):
             drawLine(leap.bone[i][0][0],leap.bone[i][0][1],leap.arm[1][0],leap.arm[1][1],leap.bone[4][0][2],'purple')
             drawLine(leap.bone[i][0][0],leap.bone[i][0][1],leap.arm[1][0],leap.arm[1][1],leap.bone[0][0][2],'purple')
-        canvas.create_text(5,5,fill='black', anchor = "w", text = "Press ESC to Quit")
+        canvas.create_text(5,5,fill='white', anchor = "w", text = "Press ESC to Quit")
+        canvas.create_text(width-10,5,fill='white',anchor='e',text=["OSC out port:",oscport])
+        sendOscMsg([leap.position],'/leap/position')
+        sendOscMsg([leap.grabstr],'/leap/grabstr')
+        sendOscMsg([leap.direction],'/leap/direction')
+        sendOscMsg([leap.velocity],'/leap/velocity')
+        sendOscMsg([leap.stretchedfingers], '/leap/stretchedfingers')
+        sendOscMsg([leap.arm],'/leap/arm')
+        sendOscMsg([leap.ftposition],'/leap/ftposition')
+        sendOscMsg([leap.ftdirection],'/leap/ftdirection')
+        sendOscMsg([leap.ftvelocity],'/leap/ftvelocity')
+        sendOscMsg([leap.bone],'/leap/bone')
         tk.update()
         if keyboard.is_pressed('ESC'):
             controller.remove_listener(leap)

@@ -32,19 +32,7 @@ y = np.array([0])
 oscserverxin = 0
 oscserver = OscServer("127.0.0.1",4000,'/leap/position','/kerasYin')
 oscclient = OscClient("127.0.0.1",5000,'/kerasYout')
-oscclientfocuswindow = OscClient("127.0.0.1",3000,'/focuswindow')
-
-# Toggle Window Focus on Leap Motion
-focuswindow = [0,0]
-def toggleFocusWindow():
-    focuswindow[0] += 1
-    focuswindow[0] %= 2
-    print("focuswindow:",focuswindow[0])
-    oscclientfocuswindow.sendMsg([focuswindow])
-keyboard.add_hotkey('shift + v', lambda: toggleFocusWindow())
-
-print("focuswindow:",focuswindow)
-print("/q: quit","e: add example","/r: remove example","/t: train", "/shift + v: toggle focus leap")
+print("/q: quit","e: add example","/r: remove example","/t: train")
 while True:
     time.sleep(0.01)
     # try: 
@@ -77,9 +65,6 @@ while True:
     #    nn.train(x,y,nExamples,epochs)
     #    pass
     if keyboard.is_pressed('q'): 
-        focuswindow[0] = 0
-        print("focuswindow:",focuswindow[0])
-        oscclientfocuswindow.sendMsg([focuswindow])
         oscserver.server.shutdown()
         quit()
         break
@@ -90,8 +75,7 @@ while True:
         oscclient.sendMsg(yout)
         oscserverxin = oscserver.xin
         print("OSC server listening on {}".format(oscserver.server.server_address),"with handlers:",oscserver.xhandler,oscserver.yhandler)
-        print("focuswindow:",focuswindow)
-        print("/q: quit","/e: add example","/r: remove example","/t: train", "/shift + v: toggle focus leap")
+        print("/q: quit","/e: add example","/r: remove example","/t: train")
         pass
     else:
         pass
