@@ -17,6 +17,16 @@ def normalize(vectin,scale):
         elif(output[i]>1): output[i] = 1
     return output
 
+def normalizevel(vectin,scale):
+    output = np.zeros(3)
+    output[0] = (vectin[0]/scale)
+    output[1] = (vectin[1]/scale)
+    output[2] = (vectin[2]/scale)
+    for i in range(vectin.size):
+        if(output[i]<0): output[i] = 0
+        elif(output[i]>1): output[i] = 1
+    return output
+
 class SampleListener(Leap.Listener):
     def init(self):
         self.stretchedfingers = np.zeros(5)
@@ -45,8 +55,8 @@ class SampleListener(Leap.Listener):
                 # get scaled hand positiom
                 self.position = normalize(np.array([h.palm_position.x,h.palm_position.y,h.palm_position.z]),self.scalepos)
                 # get hand direction and velocity
-                self.direction = normalize(np.array([h.palm_normal.x,h.palm_normal.y,h.palm_normal.z]),self.scalepos)
-                self.velocity = normalize(np.array([h.palm_velocity.x,h.palm_velocity.y,h.palm_velocity.z]),self.scalepos)
+                self.direction = np.array([h.palm_normal.x,h.palm_normal.y,h.palm_normal.z])
+                self.velocity = normalizevel(np.array([h.palm_velocity.x,h.palm_velocity.y,h.palm_velocity.z]),self.scalepos)
                 # get hand grab strength
                 self.grabstr = h.grab_strength
                 self.pinchstr = h.pinch_strength
@@ -139,15 +149,15 @@ def main():
             drawLine(leap.bone[i][0][0],leap.bone[i][0][1],leap.arm[1][0],leap.arm[1][1],leap.bone[0][0][2],'purple')
         canvas.create_text(5,5,fill='white', anchor = "w", text = "Press END to Quit")
         sendOscMsg(oscclientkeras,[leap.position],'/leap/position')
+        sendOscMsg(oscclientmax,[leap.ftposition],'/leap/ftposition')
+        sendOscMsg(oscclientmax,[leap.stretchedfingers], '/leap/stretchedfingers')
         sendOscMsg(oscclientmax,[leap.grabstr],'/leap/grabstr')
         sendOscMsg(oscclientmax,[leap.pinchstr],'/leap/pinchstr')
-        sendOscMsg(oscclientmax,[leap.direction],'/leap/direction')
         sendOscMsg(oscclientmax,[leap.velocity],'/leap/velocity')
-        sendOscMsg(oscclientmax,[leap.stretchedfingers], '/leap/stretchedfingers')
+        sendOscMsg(oscclientmax,[leap.direction],'/leap/direction')
+        # sendOscMsg(oscclientmax,[leap.ftvelocity],'/leap/ftvelocity')
+        # sendOscMsg(oscclientmax,[leap.ftdirection],'/leap/ftdirection')
         # sendOscMsg([leap.arm],'/leap/arm')
-        # sendOscMsg(oscclientmax,[leap.ftposition],'/leap/ftposition')
-        # sendOscMsg([leap.ftdirection],'/leap/ftdirection')
-        # sendOscMsg([leap.ftvelocity],'/leap/ftvelocity')
         # sendOscMsg([leap.bone],'/leap/bone')
         tk.update()
         if keyboard.is_pressed('END'):
