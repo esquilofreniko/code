@@ -62,8 +62,9 @@ OSCFunc.newMatching(
 d = {
 		for(0,15, {arg x;
 			for(0,3, {arg y;
-				~m.levset(x,y,~step[x+(y*16)]);
-				// ~m.levset(x,y,~patt[x+(y*16)]);
+				if((~patt[x+(y*16)] == 0),
+					{~m.levset(x,y,~step[x+(y*16)]);},
+					{~m.levset(x,y,15);});
 			});
 			// set control row background
 			~m.levset(x,6,4);
