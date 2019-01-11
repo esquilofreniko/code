@@ -6,9 +6,10 @@ Server.default = Server.local;
 s.waitForBoot({
 
 ~step = Array.fill(64, {0});
+~patt = Array.fill(64,{0});
 ~trig = Array.fill(4,{0});
 ~play_position = 0;
-~next_position = 0;7
+~next_position = 0;
 ~cutting = 0;
 ~keys_held = 0;
 ~key_last = 0;
@@ -58,46 +59,27 @@ OSCFunc.newMatching(
 			});
 		}, "/monome/grid/key");
 
-
 d = {
-		var highlight;
 		for(0,15, {arg x;
-			if(x==~play_position,
-					{highlight = 1},
-					{highlight = 0});
-
 			for(0,3, {arg y;
-				if((~trig[y] == 1),
-				{
-					~m.levset(x,y,(~step[y*16+x]) + (highlight * 4));},
-				{
-					~m.levset(x,y,(~step[y*16+x]));}
-				)
+				~m.levset(x,y,~step[x+(y*16)]);
+				~m.levset(x,y,~patt[x+(y*16)]);
 			});
-
 			// set control row background
 			~m.levset(x,6,4);
-
 			//set probmode indication
 			~m.levset(0,6,(4+(~probmode*11)));
-
 			// clear play position row
 			~m.levset(x,7,0);
-
 			//Highlight Loop Length
 			if((~loop_end<~loop_start),
 		    {var temp;temp=~loop_start;~loop_start = ~loop_end;~loop_end=temp});
 			if((x>=~loop_start)&&(x<=~loop_end),
-			{~m.levset(x,7,8)});
+			{~m.levset(x,7,6)});
 
 		});
 		// play  position
 		~m.levset(~play_position,7,15);
-		for(0,3, {arg t;
-			if(~step[(t*16) + ~play_position] == 1,
-				{~m.levset(t,6,15);}
-			)
-		});
 	};
 
 t = Routine({
@@ -117,22 +99,23 @@ t = Routine({
 					);
 				};
 			);
-
-		// TRIGGER SOMETHING
-		for(0,3, {arg t; var prob;
-			if(~step[(t*16) + ~play_position] > 0,
-					{ prob = rand(10);
-						if(((~step[(t*16)+~play_position]-1) > prob),
-						{
-							//If Prob Validated do:
-							~trig[t] = 1;
-						});
-				},
-					{~trig[t] = 0;}
-				);
+		//Per Step
+		for(0,3, {arg t;var prob;
+			//Pattern
+			prob = rand(10);
+			if(((~step[(t*16)+~play_position]-1) > prob),
+				{~patt[(t*16)+~play_position] = 1;},
+				{~patt[(t*16)+~play_position] = 0;});
+			//Triggers
+			if(((~patt[(t*16)+~play_position]) == 1),
+			{
+				~trig[t] = 1;
+			},{
+				~trig[t] = 0;
 			});
+		});
 
-			// ~trig.postln;
+		// ~trig.postln;
 
 		d.value;
 
@@ -140,9 +123,6 @@ t = Routine({
 	}
 
 });
-
 t.play();
-
 });
-
 )
