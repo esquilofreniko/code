@@ -5,8 +5,9 @@ Server.default = Server.local;
 
 // s.waitForBoot({
 MIDIClient.init;
-~midiout = MIDIOut(1); // Linux users: MIDIOut(0, MIDIClient.destinations[0].uid)
 MIDIIn.connectAll;
+~midiout = MIDIOut.new(0);
+~midiout.connect(1);
 ~step = Array.fill(64, {1});
 ~patt = Array.fill(64,{0});
 ~trig = Array.fill(4,{0});
@@ -206,8 +207,8 @@ r = {
 				if(((~patt[(t*16)+~play_position]) == 1),
 			{
 				~trig[t] = 1;
-				~midiout.noteOn(1,t,120);
-				~midiout.noteOff(1,t,120);
+				~midiout.noteOn(t,60,120);
+				~midiout.noteOff(t,60,120);
 				~m.levset(12+t,6,15);
 				{~m.levset(12+t,6,2+(~solomode[t]*4))}.defer(0.05);
 			},{
@@ -218,6 +219,10 @@ r = {
 		{d.value});
 	};
 d.value;
-~midi1 = MIDIFunc.noteOn({r.value;},60); // clock
-~midi2 = MIDIFunc.noteOn({~play_position = ~loop_end},61); //reset
+~midi1 = MIDIFunc.noteOn({r.value;},chan:4); // clock
+~midi2 = MIDIFunc.noteOn({~play_position = ~loop_end},chan:5); //reset
 )
+
+~midiout = MIDIOut.new(0);
+~midiout.connect(1);
+~midiout.noteOn(1,60,120);
