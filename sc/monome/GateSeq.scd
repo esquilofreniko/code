@@ -3,12 +3,14 @@ Server.default = Server.local;
 
 ~m = MonoM.new("/monome", 0);
 
-s.waitForBoot({
-
+// s.waitForBoot({
+MIDIClient.init;
+~midiout = MIDIOut(1); // Linux users: MIDIOut(0, MIDIClient.destinations[0].uid)
+MIDIIn.connectAll;
 ~step = Array.fill(64, {1});
 ~patt = Array.fill(64,{0});
 ~trig = Array.fill(4,{0});
-~play_position = -1  ;
+~play_position = 15;
 ~next_position = 0;
 ~cutting = 0;
 ~keys_held = 0;
@@ -20,7 +22,7 @@ s.waitForBoot({
 ~probvalue = 1;
 ~rec = 0;
 ~solokey = 0;
-~solomode = [0,0,0,0];
+~solomode = [1,1,1,1];
 ~solopatt = [];
 ~soloin = 0;
 
@@ -73,10 +75,13 @@ OSCFunc.newMatching(
 			if((~y==6)&&(~z==1)&&(~x>11)&&(~solokey == 1),
 				{~solomode[~x-12] = (~solomode[~x-12]+1)%2});
 			if((~y==6)&&(~z==1)&&(~x>11)&&(~solokey == 0),
-				{~m.levset(~x,~y,15);
-					if(~rec==1,
-						{~patt[((~x-12)*16)+~play_position] = 1}
-					);});
+				{
+				~midiout.noteOn(1,~x-12,120);
+				~midiout.noteOff(1,~x-12,120);
+				~m.levset(~x,~y,15);
+				if(~rec==1,
+					{~patt[((~x-12)*16)+~play_position] = 1}
+				);});
 			// count bottom row keys
 			if(~y == 7,
 				if(~z == 1,
@@ -85,17 +90,23 @@ OSCFunc.newMatching(
 			);
 			// loop and cut
 			if((~z == 1) && (~y == 7), {
-				if(~keys_held == 1, {
-					~next_position = ~x;
+				if(~keys_held == 1,
+				{
+					~play_position = ~x-1;
+					if(~play_position > ~loop_end,
+						{~play_position = ~loop_end-1});
+					if(~play_position < ~loop_start,
+						{~play_position = ~loop_end});
 					~cutting = 1;
 					~key_last = ~x;
-					},
-					{
-						~loop_start = ~key_last;
-						~loop_end = ~x;
-						~loop_end.postln;
+				},
+				{
+					~loop_start = ~key_last;
+					~loop_end = ~x;
 				});
 			});
+			if(~z == 1,
+				{d.value;});
 		}, "/monome/grid/key");
 
 d = {
@@ -124,25 +135,22 @@ d = {
 					{~m.levset(x,5,0);}
 				);
 			});
-
-			//display control row indications
-			~m.levset(0,6,(4+(~pattmode*11)));
-			~m.levset(1,6,4);
-			~m.levset(10,6,4+(~rec*11));
-			~m.levset(11,6,4+(~solokey*11));
-			~m.levset(12,6,0+(~solomode[0]*4));
-			~m.levset(13,6,0+(~solomode[1]*4));
-			~m.levset(14,6,0+(~solomode[2]*4));
-			~m.levset(15,6,0+(~solomode[3]*4));
-			//display play position row
-			~m.levset(x,7,0);
 			//Highlight Loop Length
 			if((~loop_end<~loop_start),
 		    {var temp;temp=~loop_start;~loop_start = ~loop_end;~loop_end=temp});
 			if((x>=~loop_start)&&(x<=~loop_end),
-			{~m.levset(x,7,2)});
-
+			{~m.levset(x,7,4)},
+			{~m.levset(x,7,0)});
 		});
+		//display control row indications
+		~m.levset(0,6,(4+(~pattmode*11)));
+		~m.levset(1,6,4);
+		~m.levset(10,6,4+(~rec*11));
+		~m.levset(11,6,4+(~solokey*11));
+		~m.levset(12,6,2+(~solomode[0]*4));
+		~m.levset(13,6,2+(~solomode[1]*4));
+		~m.levset(14,6,2+(~solomode[2]*4));
+		~m.levset(15,6,2+(~solomode[3]*4));
 		// play  position
 		~m.levset(~play_position,7,15);
 	};
@@ -166,45 +174,50 @@ d = {
 		~solopatt = [];
 	};
 
-r = Routine({
-	var interval = 0.200;
-	loop {
-		// update position
-		if(~cutting == 1,
-				{~play_position = ~next_position; ~cutting = 0;},
-				{
-					if(~play_position == 15,
-						{~play_position = 0;},
-						{
-							if(~play_position == ~loop_end,
-								{~play_position = ~loop_start;},
-								{~play_position = ~play_position+1;});
-						}
-					);
-				};
-			);
+r = {
+	~m.levset(~play_position,7,4);
+	~play_position = (~play_position + 1)%(~loop_end+1);
+	if(~play_position == 0,
+		{~play_position = ~loop_start;});
+		// play  position
+		~m.levset(~play_position,7,15);
 
-		d.value;
 		//Pattern
 		~morphrng = rand(15);
 		if((~morphrng < ~morphchance),
-		{~morph.value(~play_position);});
+		{
+		~morph.value(~play_position);
+		for(0,15, {arg x;
+			for(0,3, {arg y;
+				if((~patt[x+(y*16)] == 0),
+					{
+					if(~step[x+(y*16)] == 0,
+						{~m.levset(x,y,0);},
+						{~m.levset(x,y,~step[x+(y*16)]+1);});
+
+					},
+					{~m.levset(x,y,15);
+				    });
+			    });
+		    });
+	    });
 		//Triggers
 		for(0,3, {arg t;
 				if(((~patt[(t*16)+~play_position]) == 1),
 			{
 				~trig[t] = 1;
+				~midiout.noteOn(1,t,120);
+				~midiout.noteOff(1,t,120);
 				~m.levset(12+t,6,15);
+				{~m.levset(12+t,6,2+(~solomode[t]*4))}.defer(0.05);
 			},{
 				~trig[t] = 0;
 			});
 		});
-
-		interval.yield;
-	}
-
-});
-	r.play();
-	// r.next();
-});
+	if(~play_position == ~loop_start,
+		{d.value});
+	};
+d.value;
+~midi1 = MIDIFunc.noteOn({r.value;},60); // clock
+~midi2 = MIDIFunc.noteOn({~play_position = ~loop_end},61); //reset
 )
