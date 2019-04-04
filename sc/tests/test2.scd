@@ -9,7 +9,7 @@ SynthDef('drums1', {
 	sig = Select.ar(sound,[
 		SinOsc.ar(0),
 		SinOsc.ar(kfreq*EnvGen.kr(Env([1,0],[kenv]))).tanh*50*env,
-		HPF.ar(WhiteNoise.ar,1000).tanh*25*env,
+		HPF.ar(WhiteNoise.ar,1000).tanh*1*env,
 		SinOsc.ar((freq*carPartial)+mod)*0.5*henv,
 	]);
 	sig2 = Select.ar(sound2,[
@@ -25,7 +25,7 @@ SynthDef('drums1', {
 Pdef('pd1',
 	Pbind(
 		'instrument','drums1',
-		'dur', Prand([1/8],inf),
+		'dur', Prand([1/6],inf),
 		'freq',  Pwhite(100,10000),
 		'index', Pwhite(100,10000),
 		'modPartial',Pwhite(0,100),
@@ -36,7 +36,7 @@ Prand([0,3,1,2,3,0]),
 Prand([0,3,1,2,3,0]),
 Prand([0,3,1,2,3,0]),
 Prand([0,3,1,2,3,0]),
-Prand([0,3,1,2,3,0]),F
+Prand([0,3,1,2,3,0]),
 Prand([0,3,1,2,3,0]),
 Prand([0,3,1,2,3,0]),
 Prand([2  ]),
@@ -69,7 +69,6 @@ SynthDef('bass1', {arg freq=55,modPartial=1,carPartial=1,index=1,amp=0.5,rel=10,
 }).add;
 )
 
-
 (
 Pdef('pdbass1',
 	Pbind(
@@ -80,10 +79,10 @@ Pdef('pdbass1',
 		'carPartial',Prand([2],inf),
 		'modPartial',Prand([0.5],inf),
 		'index',Prand([5],inf),
-		'amp',Prand([0.25],inf),
+		'amp',Prand([0.5],inf),
 		'ffreq',Pwhite(100,10000),
 	)
-).stop.quant(4);
+).play.quant(4);
 )
 
 (
@@ -111,5 +110,3 @@ Pdef('pp1',
 	)
 ).play.quant(4);
 )
-
-

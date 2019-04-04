@@ -1,6 +1,6 @@
 (
 Server.default = Server.local;
-
+~m.free;
 ~m = MonoM.new("/monome", 0);
 
 // s.waitForBoot({
@@ -25,7 +25,6 @@ MIDIIn.connectAll;
 ~solomode = [1,1,1,1];
 ~solopatt = [];
 ~soloin = 0;
-
 ~m.useDevice(0);
 
 OSCFunc.newMatching(
