@@ -43,7 +43,7 @@ void draw() {
   fft.analyze(spectrum);
   
   for(int k = 0; k<256;k++){
-    if(spectrum[k] > 0.1){
+    if(spectrum[k] > 0.01){
       int index = int(random(0,20));
       shapevert[index] = (width/2-75) + int(random((width/2)-75,(width/2)+75));
       shapevert[index+20] = int(random((height/2)-75,(height/2)+75));
@@ -65,7 +65,7 @@ void draw() {
   
   for (int i = 0; i < movers.length; i++) {
     for(int k = 0; k<64;k++){
-      if(spectrum[k] > 0.1){
+      if(spectrum[k] > 0.01){
         for ( int j = 0; j < attractors.length; j++) {
           PVector force = attractors[j].attract(movers[i]);
           movers[i].applyForce(force);

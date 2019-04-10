@@ -49,7 +49,13 @@ Pdef('pp1',
 		'rel', Pwhite(1.0,4.0,inf),
 		'amp', (Pkey('midinote').reciprocal*1).trace,
 		'pan', Pwhite(-0.5,0.5,inf),
+		\osc, Pfunc{
+		var osc = NetAddr.new("127.0.0.1",12345);
+		osc.sendMsg('/sc',0,1,2,3,4);
+		}
 	)
 ).play.quant(4);
 )
+
+
 
