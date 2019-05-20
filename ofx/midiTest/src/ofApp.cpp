@@ -93,7 +93,7 @@ void ofApp::draw() {
 						attractor[j].setRad(ofRandom(0,ofGetHeight()/8));
 					}
 				}
-				else if(note1 > 64){
+				else if(note1 > 65){
 					repel += 1;
 					repel %= 2;
 				}
