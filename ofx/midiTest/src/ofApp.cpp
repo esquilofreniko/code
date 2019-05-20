@@ -7,7 +7,7 @@ void ofApp::setup() {
 	// ofBackground(255, 255, 255);
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	midiIn.listInPorts();
-	midiIn.openPort("Teensy MIDI");
+	midiIn.openPort("Elektron Digitakt Digitakt in 1");
 	midiIn.ignoreTypes(false, false, false);
 	midiIn.addListener(this);
 	midiIn.setVerbose(false);
