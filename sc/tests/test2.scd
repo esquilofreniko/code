@@ -1,7 +1,8 @@
 (
 SynthDef('drums1', {
 	arg kfreq=1100,amp=1,kenv=1/8,rel=1/8,sound=0,freq=1000,modPartial=1,carPartial=1,index=100,sound2=0,out=0;
-	var sig, env,henv,hhenv,mod,sig2;
+	var sig, env,henv,hhenv,mod,sig2,;
+
 	mod = SinOsc.ar(freq * modPartial,0,freq*index.abs);
 	env = EnvGen.kr(Env([1,0],[rel]),doneAction:2);
 	henv = EnvGen.kr(Env([1,0],[rel/4]));
