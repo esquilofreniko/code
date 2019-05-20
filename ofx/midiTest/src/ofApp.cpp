@@ -75,15 +75,17 @@ void ofApp::draw() {
 			else {
 				note1 = message.pitch;
 				vel1 = message.pitch;
-				if(note1 < 64){
-					for(int j=minAttractor; j<activeAttractors;j++){
-						attractor[j].setRad(ofRandom(0,ofGetHeight()/8));
+				if(vel1 > 0){
+					if(note1 < 64){
+						for(int j=minAttractor; j<activeAttractors;j++){
+							attractor[j].setRad(ofRandom(0,ofGetHeight()/8));
+						}
 					}
-				}
-				else if(note1 > 65){
-					repel += 1;
-					repel %= 2;
-					bgColor = repel * 255;
+					else if(note1 > 65){
+						repel += 1;
+						repel %= 2;
+						bgColor = repel * 255;
+					}		
 				}
 			}
 			// if(note1 != note1old){
