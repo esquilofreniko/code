@@ -39,14 +39,8 @@ void ofApp::setup() {
 //--------------------------------------------------------------
 void ofApp::update() {
 	for(int j=minAttractor; j<activeAttractors;j++){
-        // orientation += ofRandom(-2,2);
-        // attractor[j].sphere.setOrientation(ofQuaternion(orientation,ofVec3f(ofGetWidth()/2,ofGetHeight()/2,0)));
-        attractor[j].setRad(attractor[j].rad + ofRandom(-1,2));
         if(attractor[j].rad < 0){attractor[j].setRad(0);}
         if(attractor[j].rad > ofGetHeight()/8){attractor[j].setRad(ofGetHeight()/8);}
-        if(j!=0){
-            if(attractor[j].rad > ofGetHeight()/32){attractor[j].setRad(ofGetHeight()/32);}
-        }
         for(int i=0;i<numParticles;i++){
             ofVec3f force = attractor[j].attract(particle[i],repel);
             if(j!=0){force = attractor[j].attract(particle[i],1);}
@@ -56,13 +50,6 @@ void ofApp::update() {
     for (int i=0;i<numParticles;i++){
         particle[i].checkEdges(0,ofGetWidth(),0,ofGetHeight());
         particle[i].update();
-    }
-    counter++;
-    if(counter > counterMax){counter = 0;}
-    if(counter == 0){
-        repel = ofRandom(0,2);
-        bgColor = repel * 255;
-        counterMax = ofRandom(50,500);
     }
 }
 
@@ -96,6 +83,7 @@ void ofApp::draw() {
 				else if(note1 > 65){
 					repel += 1;
 					repel %= 2;
+					bgColor = repel * 255;
 				}
 			}
 			// if(note1 != note1old){
