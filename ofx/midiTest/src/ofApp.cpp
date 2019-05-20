@@ -7,7 +7,7 @@ void ofApp::setup() {
 	// ofBackground(255, 255, 255);
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	midiIn.listInPorts();
-	midiIn.openPort("Teensy MIDI 1");
+	midiIn.openPort("Teensy MIDI");
 	midiIn.ignoreTypes(false, false, false);
 	midiIn.addListener(this);
 	midiIn.setVerbose(false);
@@ -91,10 +91,10 @@ void ofApp::draw() {
 				note1 = message.pitch;
 				vel1 = message.pitch;
 			}
-			if(note1 != note1old){
-				std::cout << "note: " << note1 << " velocity: " << vel1 << endl;
-			}	
-			note1old = note1;
+			// if(note1 != note1old){
+				// std::cout << "note: " << note1 << " velocity: " << vel1 << endl;
+			// }	
+			// note1old = note1;
 		}
 		counter++;
 	}

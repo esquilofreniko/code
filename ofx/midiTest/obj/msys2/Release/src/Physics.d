@@ -1,6 +1,6 @@
 obj/msys2/Release/src/Physics.o: \
- D:/documents/ofx/apps/myApps/midiTest/src/Physics.cpp \
- D:/documents/ofx/apps/myApps/midiTest/src/Physics.h \
+ D:/documents/ofx/apps/myapps/midiTest/src/Physics.cpp \
+ D:/documents/ofx/apps/myapps/midiTest/src/Physics.h \
  D:/documents/ofx/libs/openFrameworks/ofMain.h \
  D:/documents/ofx/libs/openFrameworks/utils/ofConstants.h \
  D:/documents/ofx/libs/tess2/include/tesselator.h \
@@ -332,7 +332,7 @@ obj/msys2/Release/src/Physics.o: \
  D:/documents/ofx/libs/openFrameworks/3d/ofCamera.h \
  D:/documents/ofx/libs/openFrameworks/3d/ofEasyCam.h
 
-D:/documents/ofx/apps/myApps/midiTest/src/Physics.h:
+D:/documents/ofx/apps/myapps/midiTest/src/Physics.h:
 
 D:/documents/ofx/libs/openFrameworks/ofMain.h:
 

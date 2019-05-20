@@ -1,6 +1,6 @@
 obj/msys2/Release/src/ofApp.o: \
- D:/documents/ofx/apps/myApps/midiTest/src/ofApp.cpp \
- D:/documents/ofx/apps/myApps/midiTest/src/ofApp.h \
+ D:/documents/ofx/apps/myapps/midiTest/src/ofApp.cpp \
+ D:/documents/ofx/apps/myapps/midiTest/src/ofApp.h \
  D:/documents/ofx/libs/openFrameworks/ofMain.h \
  D:/documents/ofx/libs/openFrameworks/utils/ofConstants.h \
  D:/documents/ofx/libs/tess2/include/tesselator.h \
@@ -331,7 +331,7 @@ obj/msys2/Release/src/ofApp.o: \
  D:/documents/ofx/libs/openFrameworks/3d/of3dUtils.h \
  D:/documents/ofx/libs/openFrameworks/3d/ofCamera.h \
  D:/documents/ofx/libs/openFrameworks/3d/ofEasyCam.h \
- D:/documents/ofx/apps/myApps/midiTest/src/Physics.h \
+ D:/documents/ofx/apps/myapps/midiTest/src/Physics.h \
  D:/documents/ofx/addons/ofxMIDI/src/ofxMidi.h \
  D:/documents/ofx/addons/ofxMIDI/src/ofxMidiIn.h \
  D:/documents/ofx/addons/ofxMIDI/src/ofxBaseMidi.h \
@@ -345,7 +345,7 @@ obj/msys2/Release/src/ofApp.o: \
  D:/documents/ofx/addons/ofxMIDI/src/ofxMidiClock.h \
  D:/documents/ofx/addons/ofxMIDI/src/ofxMidiTimecode.h
 
-D:/documents/ofx/apps/myApps/midiTest/src/ofApp.h:
+D:/documents/ofx/apps/myapps/midiTest/src/ofApp.h:
 
 D:/documents/ofx/libs/openFrameworks/ofMain.h:
 
@@ -1007,7 +1007,7 @@ D:/documents/ofx/libs/openFrameworks/3d/ofCamera.h:
 
 D:/documents/ofx/libs/openFrameworks/3d/ofEasyCam.h:
 
-D:/documents/ofx/apps/myApps/midiTest/src/Physics.h:
+D:/documents/ofx/apps/myapps/midiTest/src/Physics.h:
 
 D:/documents/ofx/addons/ofxMIDI/src/ofxMidi.h:
 
