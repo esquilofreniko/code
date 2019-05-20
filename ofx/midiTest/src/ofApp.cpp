@@ -12,8 +12,8 @@ void ofApp::setup() {
 	midiIn.addListener(this);
 	midiIn.setVerbose(false);
 
-    // ofSetFullscreen(true);
-    ofSetWindowShape(1920,1080);
+    ofSetFullscreen(true);
+    // ofSetWindowShape(1920,1080);
     ofSetVerticalSync(true);
     ofEnableAlphaBlending();
 	ofSetSmoothLighting(true);
