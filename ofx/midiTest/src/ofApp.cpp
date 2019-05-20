@@ -76,8 +76,6 @@ int counter = 0;
 void ofApp::draw() {
 	for(unsigned int i = 0; i < midiMessages.size(); ++i) {
 		ofxMidiMessage &message = midiMessages[i];
-		int x = 10;
-		int y = i*40 + 40;
 		stringstream text;
 		text << ofxMidiMessage::getStatusString(message.status);
 		if(message.status < MIDI_SYSEX) {
@@ -90,6 +88,15 @@ void ofApp::draw() {
 			else {
 				note1 = message.pitch;
 				vel1 = message.pitch;
+				if(note1 < 64){
+					for(int j=minAttractor; j<activeAttractors;j++){
+						attractor[j].setRad(ofRandom(0,ofGetHeight()/8));
+					}
+				}
+				else if(note1 > 64){
+					repel += 1;
+					repel %= 2;
+				}
 			}
 			// if(note1 != note1old){
 				// std::cout << "note: " << note1 << " velocity: " << vel1 << endl;
